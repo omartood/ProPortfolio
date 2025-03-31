@@ -75,7 +75,7 @@ export default function About() {
               variants={itemVariants}
               className="text-3xl md:text-4xl font-bold"
             >
-              Professional <span className="text-primary">Web Developer</span>{" "}
+              Professional <span className="text-primary">Full Stack Developer</span>{" "}
               with a passion for creating meaningful experiences
             </motion.h2>
 
