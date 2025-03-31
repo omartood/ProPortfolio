@@ -1,0 +1,47 @@
+[
+  {
+    "id": "javascript-concurrency",
+    "title": "JavaScript Concurrency: Sidee Ayuu U Shaqeeyaa?",
+    "slug": "javascript-concurrency",
+    "excerpt": "Hordhac JavaScript waa single-threaded, taasoo la micno ah in ay kaliya hawl qaban karto waqti kasta. Laakiin, sidee ayey u maareysaa hawlo badan oo isku mar ah?",
+    "content": "# JavaScript Concurrency: Sidee Ayuu U Shaqeeyaa?\n\nHordhac JavaScript waa single-threaded, taasoo la micno ah in ay kaliya hawl qaban karto waqti kasta. Laakiin, sidee ayey u maareysaa hawlo badan oo isku mar ah?\n\n## Event Loop\n\nJavaScript wuxuu isticmaalaa qaab loo yaqaan 'Event Loop' si uu u fuliyo hawlaha asynchronous-ka ah sida network requests, setTimeout, ama DOM-events.\n\n- **Call Stack**: Meesha lagu fuliyo code-ka hadda socda\n- **Callback Queue**: Safka ay ku jiraan function-nada diyaarka u ah in la fuliyo\n- **Event Loop**: Nidaamka u dhexeeya Call Stack iyo Callback Queue\n\n## Tusaale\n\n```javascript\nconsole.log('Bilow');\n\nsetTimeout(() => {\n  console.log('Waxyar ka dib');\n}, 2000);\n\nconsole.log('Dhammaad');\n```\n\nNatiijada:\n```\nBilow\nDhammaad\nWaxyar ka dib\n```\n\n## Promise-yada\n\nPromise-yada waa qaab casri ah oo lagu maareeyo hawlaha asynchronous-ka ah:\n\n```javascript\nfunction qaadoXogta() {\n  return new Promise((resolve, reject) => {\n    // Qaado xogta serverka\n    if (xogtaWaaSaxan) {\n      resolve(xogta);\n    } else {\n      reject('Khalad ayaa dhacay');\n    }\n  });\n}\n\nqaadoXogta()\n  .then(xogta => console.log(xogta))\n  .catch(khalad => console.error(khalad));\n```\n\n## Async/Await\n\nAsync/await waa hab cusub oo lagu maareeyo asynchronous code:\n\n```javascript\nasync function main() {\n  try {\n    const xogta = await qaadoXogta();\n    console.log(xogta);\n  } catch (khalad) {\n    console.error(khalad);\n  }\n}\n\nmain();\n```\n\n## Gunaanad\n\nInkastoo JavaScript ay tahay single-threaded, waxay leedahay qaabab awood leh oo lagu maareeyo hawlaha asynchronous-ka ah. Fahamka Event Loop, Promise-yada, iyo async/await waxay kaa caawinayaan inaad qorto code wanaagsan oo aan hakinin UI-ga.",
+    "coverImage": "/images/image-1.png",
+    "publishedAt": "2025-03-20T12:00:00.000Z",
+    "tags": [
+      "JavaScript",
+      "Async",
+      "Web Development",
+      "Programming"
+    ]
+  },
+  {
+    "id": "deep-learning",
+    "title": "Deep Learning: Maskaxda Artificial Intelligence-ka",
+    "slug": "deep-learning",
+    "excerpt": "Hordhac Dunida maanta, AI (Artificial Intelligence) waxay la mid noqotay maskax bini'aadam! Haddii aad aragtay codad la abuuri karo sida ChatGPT, maskax ka shaqeysa ayaa keentay jirista AI-ga casriga ah.",
+    "content": "# Deep Learning: Maskaxda Artificial Intelligence-ka\n\n## Hordhac\n\nDunida maanta, AI (Artificial Intelligence) waxay la mid noqotay maskax bini'aadam! Haddii aad aragtay codad la abuuri karo sida ChatGPT, maskax ka shaqeysa ayaa keentay jirista AI-ga casriga ah.\n\n## Maxay Tahay Deep Learning?\n\nDeep Learning waa hab gaaban oo lagu dhiso AI-ga. Waxay u dhismaysaa habab la mid ah maskaxda bini'aadamka, kuwaas oo loo yaqaanno neural networks.\n\n### Sida Loo Shaqeeyo\n\n1. **Input**: Xogta galka ah (tusaale, sawir)\n2. **Hidden Layers**: Tabaqooyin badan oo network ah oo xogta ka shaqeeya\n3. **Output**: Jawaabta ka timid xogta (tusaale, \"Waa bisad\")\n\n## Meelaha Lagu Isticmaalo\n\n- **Computer Vision**: Garashada waxa ku jira sawirrada\n- **Natural Language Processing**: Fahamka luuqadda bini'aadamka\n- **Autonomous Vehicles**: Baabuurta is-wada\n- **Medical Diagnosis**: Garashada cudurrada\n\n## Tusaale Code Python\n\n```python\nimport tensorflow as tf\nfrom tensorflow.keras import layers, models\n\n# Samee model\nmodel = models.Sequential([\n    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),\n    layers.MaxPooling2D((2, 2)),\n    layers.Flatten(),\n    layers.Dense(128, activation='relu'),\n    layers.Dense(10, activation='softmax')\n])\n\n# Compile model\nmodel.compile(optimizer='adam',\n              loss='sparse_categorical_crossentropy',\n              metrics=['accuracy'])\n\n# Train model\nmodel.fit(train_images, train_labels, epochs=5)\n```\n\n## Caqabadaha\n\n- **Data**: Waxay u baahan tahay xog badan\n- **Computing Power**: Waxay u baahan tahay kheyraad badan\n- **Black Box**: Mararka qaarkood ma fahamno sababta ay jawaab gaar ah u soo saartay\n\n## Mustaqbalka\n\nDeep Learning waxay kaalmeyn doontaa horumarinta adeegyo badan oo nolosheena saamayn ku yeelanaya, sida:\n\n- Isticmaalka luuqadaha dabiiciga ah si ka wanaagsan\n- Caafimaadka personalized-ka ah\n- Robotics-ka garaadka leh\n\n## Gunaanad\n\nDeep Learning waa tiknoolajiyad awood leh oo bedeleysa adduunka. Fahamka asaasiyaadkeeda wuxuu kaa caawin karaa inaad ka faa'iidaysato fursadaha ay abuureyso mustaqbalka AI-ga.",
+    "coverImage": "/images/image-2.png",
+    "publishedAt": "2025-03-20T14:30:00.000Z",
+    "tags": [
+      "AI",
+      "Deep Learning",
+      "Neural Networks",
+      "Technology"
+    ]
+  },
+  {
+    "id": "vibe-coding",
+    "title": "Vibe Coding: Sidee Ayey U Shaqeysaa?",
+    "slug": "vibe-coding",
+    "excerpt": "Vibe Coding waa qaab cusub oo wax lagu qoro, kaas oo isku daraya AI iyo programming si loo abuuro khibrad sahlan oo wax qorista ah.",
+    "content": "# Vibe Coding: Sidee Ayey U Shaqeysaa?\n\n## Waa Maxay Vibe Coding?\n\nVibe Coding waa qaab cusub oo programming ah oo isticmaalaya AI si ay u fududeyso habka code-ka loo qoro. Waxay ku dhisantahay fikradda ah in AI-ga uu gacan ka geysto programming-ka, si markaas uu qofka uu diiradda saaro xallinta dhibaatada halkii uu ka fekeri lahaa syntax-ka luuqadda.\n\n## Sida Ay U Shaqeyso\n\n1. **Fahanka Luuqadda Caadiga ah**: Qor waxa aad rabto inaad sameyso oo Ingiriis (ama luuqad kasta)\n2. **AI Turjumaad**: AI-da ayaa turjumaya waxa aad rabto inaad sameyso oo u beddesha code\n3. **Saxid & Hagid**: Wax ka beddelka AI-da si aad u hesho code-ka saxda ah\n\n## Faa'iidooyinka\n\n### 1. U Furan Dhammaan\n\nHa ahaato inaad tahay qof cusub ama programmer khibrad leh, Vibe Coding waxay u fududeysaa dhammaan dadka inay wax abuuraan:\n\n```javascript\n// Tusmada: \"Samee function xisaabinaya wadarta liiska lambarrada\"\n\nfunction calculateTotal(numbers) {\n  return numbers.reduce((total, current) => total + current, 0);\n}\nconsole.log(calculateTotal([5, 10, 20])); // Natiijada: 35\n```\n\n### 2. Ka Feker Xallinta Dhibaatada, Ma Aha Syntax\n\nDiiradda saar halbeegga sare: habka dhibaatada loo xallinayo, halkii aad ka fekeri lahayd syntax-ka adiga oo jecel.\n\n### 3. Si Dhakhso Leh U Abuur Prototaypyo\n\nVibe Coding waxay kuu ogolaanaysaa inaad si dhakhso leh u abuurto tusaalooyin shaqeynaya, taas oo kaa caawisa inaad si dhakhso leh u tijaabiyo fikradahaaga.\n\n## Tusaalooyinka Common-ka Ah\n\n### Concurrent Requests\n\n```javascript\n// \"Samee dhowr codsiyada API iyo sugid dhammaan inay dhammaystirmaan\"\nPromise.all([\n  fetch('/api/users'),\n  fetch('/api/posts'),\n  fetch('/api/comments')\n])\n.then(responses => {\n  // All promises resolved\n  console.log(responses);\n})\n.catch(error => {\n  // If any promise rejects\n  console.error('Error:', error);\n});\n```\n\n## Gunaanad\n\nVibe Coding waa mustaqbalka programming-ka. Waxay ka dhigeysaa programming mid ka duwan abuurista code, waxayna ka dhigeysaa hal-abuur iyo xallin dhibaato. Marka AI-da qabtaan hawlaha caadiga ah, adiga waxaad diiradda saari kartaa waxyaabaha muhiimka ah: abuurista xalal waara oo waxtar leh.",
+    "coverImage": "/images/images-3.png",
+    "publishedAt": "2025-03-20T16:45:00.000Z",
+    "tags": [
+      "Vibe Coding",
+      "AI",
+      "Programming",
+      "Web Development"
+    ]
+  }
+]
