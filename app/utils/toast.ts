@@ -71,18 +71,26 @@ export const updateToast = (
   }
 };
 
-type PromiseToastOptions = {
+interface ToastMessages {
   loading: string;
   success: string;
-  error: string;
-};
+  error: string | ((error: unknown) => string);
+}
 
-/**
- * Promise toast handler - shows loading, then success/error based on promise resolution
- */
-export const promiseToast = <T>(
+export async function promiseToast<T>(
   promise: Promise<T>,
-  options: PromiseToastOptions
-): Promise<T> => {
-  return toast.promise(promise, options);
-};
+  messages: ToastMessages,
+  options?: ToastOptions
+): Promise<T> {
+  return toast.promise(
+    promise,
+    {
+      loading: messages.loading,
+      success: messages.success,
+      error: messages.error,
+    },
+    {
+      duration: options?.duration,
+    }
+  );
+}

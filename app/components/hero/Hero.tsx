@@ -221,6 +221,37 @@ export default function Hero() {
                 priority
               />
 
+              {/* Soplang logo overlay (center) */}
+              <motion.div
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <motion.div
+                  animate={{
+                    rotate: [0, 5, 0, -5, 0],
+                    scale: [1, 1.05, 1, 0.95, 1],
+                    transition: {
+                      duration: 8,
+                      ease: "easeInOut",
+                      repeat: Infinity,
+                    },
+                  }}
+                  className="bg-card/80 backdrop-blur-md p-3 rounded-full border-2 border-primary shadow-lg"
+                >
+                  <div className="relative w-24 h-24">
+                    <Image
+                      src="/images/soplang-logo.svg"
+                      alt="Soplang Logo"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
+
               {/* Programming Language Icons */}
               {programmingLanguages.map((lang, i) => (
                 <motion.div

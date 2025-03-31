@@ -24,12 +24,20 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [navVisible, setNavVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
+  // Set mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Handle scroll for showing/hiding navbar and applying background
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
@@ -62,6 +70,8 @@ export default function Navbar() {
 
   // Close mobile menu when clicking outside
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         mobileMenuRef.current &&
@@ -151,6 +161,9 @@ export default function Navbar() {
     },
   };
 
+  // Don't render anything until mounted (hydration safe)
+  if (!mounted) return null;
+
   return (
     <motion.header
       variants={navbarVariants}
@@ -190,6 +203,7 @@ export default function Navbar() {
                   pathname === link.href ||
                   (link.href.includes("#") &&
                     pathname === "/" &&
+                    typeof window !== "undefined" &&
                     window.location.hash === link.href.substring(1))
                     ? "text-primary"
                     : ""
@@ -199,37 +213,20 @@ export default function Navbar() {
               </button>
             </motion.div>
           ))}
-          <motion.div
-            custom={navLinks.length}
-            variants={linkVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <button
-              onClick={() =>
-                handleNavigation(pathname === "/" ? "#contact" : "/#contact")
-              }
-              className="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-primary-light transition-colors duration-300"
-            >
-              Let's Talk
-            </button>
-          </motion.div>
         </nav>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-foreground p-2 focus:outline-none"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden p-2 hover:bg-accent rounded-lg transition-colors duration-300"
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
+        </button>
       </div>
 
       {/* Mobile Menu */}
@@ -241,34 +238,27 @@ export default function Navbar() {
             initial="closed"
             animate="open"
             exit="closed"
-            className="absolute top-full left-0 right-0 bg-card shadow-lg overflow-hidden border-b border-border md:hidden"
+            className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-lg border-b border-border/50 overflow-hidden"
           >
-            <nav className="flex flex-col px-6 pt-2 pb-6">
+            <nav className="max-w-7xl mx-auto py-4 px-6 flex flex-col gap-2">
               {navLinks.map((link, i) => (
-                <button
+                <motion.div
                   key={link.name}
-                  onClick={() => handleNavigation(link.href)}
-                  className={`flex items-center justify-between text-foreground/80 hover:text-primary py-3 transition-colors duration-300 text-base font-medium text-left border-b border-border/30 last:border-0 ${
-                    pathname === link.href ||
-                    (link.href.includes("#") &&
-                      pathname === "/" &&
-                      window.location.hash === link.href.substring(1))
-                      ? "text-primary"
-                      : ""
-                  }`}
+                  variants={linkVariants}
+                  custom={i}
+                  initial="hidden"
+                  animate="visible"
                 >
-                  {link.name}
-                  <ChevronDown className="w-4 h-4 transition-transform" />
-                </button>
+                  <button
+                    onClick={() => handleNavigation(link.href)}
+                    className={`w-full text-left py-2 px-4 rounded-lg hover:bg-accent transition-colors duration-300 ${
+                      pathname === link.href ? "text-primary" : ""
+                    }`}
+                  >
+                    {link.name}
+                  </button>
+                </motion.div>
               ))}
-              <button
-                onClick={() =>
-                  handleNavigation(pathname === "/" ? "#contact" : "/#contact")
-                }
-                className="bg-primary text-white px-5 py-3 rounded-lg text-center text-base font-medium hover:bg-primary-light transition-colors duration-300 mt-4 w-full"
-              >
-                Let's Talk
-              </button>
             </nav>
           </motion.div>
         )}

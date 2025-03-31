@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import ScrollProgress from "./components/ui/ScrollProgress";
@@ -23,12 +23,13 @@ export const metadata: Metadata = {
   keywords:
     "web development, portfolio, javascript, react, next.js, frontend, developer",
   creator: "Modern Developer",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
