@@ -1,0 +1,40 @@
+[
+  {
+    "id": "1",
+    "title": "Soplang: The Somalia Programming Language",
+    "description": "Developing Somalia's first native programming language with features tailored for Somali developers and localized syntax.",
+    "technologies": [
+      "Compiler Design",
+      "TypeScript",
+      "LLVM",
+      "Parser Generators"
+    ],
+    "status": "active",
+    "progress": 45,
+    "startDate": "2024-02-10",
+    "estimatedCompletion": "2024-08-30",
+    "thumbnailUrl": "/images/imag-4.jpg"
+  },
+  {
+    "id": "2",
+    "title": "AI-Powered Code Assistant",
+    "description": "Building an intelligent coding assistant that understands Somali language instructions and generates code in multiple programming languages.",
+    "technologies": ["Machine Learning", "NLP", "Python", "TensorFlow"],
+    "status": "planning",
+    "progress": 10,
+    "startDate": "2024-04-15",
+    "estimatedCompletion": "2024-12-01",
+    "thumbnailUrl": "/images/image-2.png"
+  },
+  {
+    "id": "3",
+    "title": "Somali Tech Education Platform",
+    "description": "Creating an accessible learning platform for tech education specifically designed for Somali speakers with localized content.",
+    "technologies": ["Next.js", "React", "MongoDB", "Express"],
+    "status": "planning",
+    "progress": 5,
+    "startDate": "2024-05-20",
+    "estimatedCompletion": "2025-01-15",
+    "thumbnailUrl": "/images/images-3.png"
+  }
+]

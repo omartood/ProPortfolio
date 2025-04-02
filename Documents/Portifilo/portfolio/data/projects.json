@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1",
+    "title": "AI-Powered Portfolio",
+    "description": "A dynamic portfolio website with AI assistant integration",
+    "technologies": ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+    "status": "active",
+    "progress": 85,
+    "startDate": "2024-03-15",
+    "estimatedCompletion": "2024-04-10",
+    "thumbnailUrl": "/images/image-1.png"
+  },
+  {
+    "id": "2",
+    "title": "Smart Todo Application",
+    "description": "Task management application with AI prioritization features",
+    "technologies": ["React", "Node.js", "MongoDB", "Express"],
+    "status": "active",
+    "progress": 60,
+    "startDate": "2024-02-20",
+    "estimatedCompletion": "2024-04-20",
+    "thumbnailUrl": "/images/image-2.png"
+  },
+  {
+    "id": "3",
+    "title": "E-commerce Platform",
+    "description": "Fully featured online shopping platform with payment integration",
+    "technologies": ["Next.js", "Stripe", "Prisma", "PostgreSQL"],
+    "status": "planning",
+    "progress": 15,
+    "startDate": "2024-03-25",
+    "estimatedCompletion": "2024-06-30",
+    "thumbnailUrl": "/images/images-3.png"
+  },
+  {
+    "id": "4",
+    "title": "Developer Blog",
+    "description": "Technical blog with interactive code examples and tutorials",
+    "technologies": ["Next.js", "MDX", "Tailwind CSS", "Vercel"],
+    "status": "completed",
+    "progress": 100,
+    "startDate": "2024-01-10",
+    "estimatedCompletion": "2024-03-01",
+    "thumbnailUrl": "/images/imag-4.jpg"
+  }
+]

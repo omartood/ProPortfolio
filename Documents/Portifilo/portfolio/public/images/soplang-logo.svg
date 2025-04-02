@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <!-- Blue star with white stripes -->
+  <g transform="translate(250 250)">
+    <!-- Blue star shape -->
+    <path fill="#4285F4" d="M0,-200 L58,-62 L200,-58 L74,24 L122,190 L0,100 L-122,190 L-74,24 L-200,-58 L-58,-62 Z" />
+    
+    <!-- White stripe top -->
+    <rect x="-120" y="-20" width="240" height="40" fill="white" transform="rotate(-15)" />
+    
+    <!-- White stripe bottom -->
+    <rect x="-120" y="40" width="240" height="40" fill="white" transform="rotate(-15)" />
+  </g>
+</svg> 

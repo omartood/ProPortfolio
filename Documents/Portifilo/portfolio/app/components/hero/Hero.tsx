@@ -4,6 +4,50 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
+// Programming language icons to display
+const programmingLanguages = [
+  {
+    name: "JavaScript",
+    icon: "/icons/javascript.svg",
+    position: { top: "20%", left: "15%" },
+  },
+  {
+    name: "TypeScript",
+    icon: "/icons/typescript.svg",
+    position: { top: "25%", right: "15%" },
+  },
+  {
+    name: "Python",
+    icon: "/icons/python.svg",
+    position: { top: "70%", left: "12%" },
+  },
+  {
+    name: "React",
+    icon: "/icons/react.svg",
+    position: { top: "75%", right: "17%" },
+  },
+  {
+    name: "HTML",
+    icon: "/icons/html5.svg",
+    position: { top: "40%", left: "8%" },
+  },
+  {
+    name: "CSS",
+    icon: "/icons/css3.svg",
+    position: { top: "55%", right: "10%" },
+  },
+  {
+    name: "Node.js",
+    icon: "/icons/nodejs.svg",
+    position: { bottom: "15%", left: "30%" },
+  },
+  {
+    name: "C++",
+    icon: "/icons/cpp.svg",
+    position: { top: "10%", right: "30%" },
+  },
+];
+
 export default function Hero() {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -23,6 +67,19 @@ export default function Hero() {
       opacity: 1,
       transition: { duration: 0.5, ease: "easeOut" },
     },
+  };
+
+  const iconVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: (i: number) => ({
+      scale: 1,
+      opacity: 1,
+      transition: {
+        delay: 0.8 + i * 0.1,
+        duration: 0.4,
+        ease: "easeOut",
+      },
+    }),
   };
 
   return (
@@ -69,8 +126,9 @@ export default function Hero() {
             variants={itemVariants}
             className="text-muted-foreground text-lg max-w-xl"
           >
-            I create beautiful, responsive websites with modern technologies.
-            Let's build something amazing together.
+            I create beautiful, responsive websites and innovative programming
+            languages. Currently working on Soplang: Somalia's first programming
+            language.
           </motion.p>
 
           <motion.div
@@ -162,6 +220,61 @@ export default function Hero() {
                 className="object-cover"
                 priority
               />
+
+              {/* Soplang logo overlay (center) */}
+              <motion.div
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <motion.div
+                  animate={{
+                    rotate: [0, 5, 0, -5, 0],
+                    scale: [1, 1.05, 1, 0.95, 1],
+                    transition: {
+                      duration: 8,
+                      ease: "easeInOut",
+                      repeat: Infinity,
+                    },
+                  }}
+                  className="bg-card/80 backdrop-blur-md p-3 rounded-full border-2 border-primary shadow-lg"
+                >
+                  <div className="relative w-24 h-24">
+                    <Image
+                      src="/images/soplang-logo.svg"
+                      alt="Soplang Logo"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Programming Language Icons */}
+              {programmingLanguages.map((lang, i) => (
+                <motion.div
+                  key={lang.name}
+                  custom={i}
+                  variants={iconVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover={{ scale: 1.2 }}
+                  className="absolute z-10 bg-card/80 backdrop-blur-sm border border-border rounded-full p-2 shadow-md hover:shadow-lg transition-all duration-300"
+                  style={lang.position}
+                  title={lang.name}
+                >
+                  <div className="w-10 h-10 relative">
+                    <Image
+                      src={lang.icon}
+                      alt={lang.name}
+                      fill
+                      className="object-contain p-1.5"
+                    />
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
 

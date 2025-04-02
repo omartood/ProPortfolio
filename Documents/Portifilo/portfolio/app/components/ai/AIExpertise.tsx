@@ -7,6 +7,16 @@ import Image from "next/image";
 // AI technologies and frameworks
 const aiTechnologies = [
   {
+    name: "OpenAI",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg",
+    category: "LLM Platform",
+  },
+  {
+    name: "LangChain",
+    icon: "https://www.vectorlogo.zone/logos/langchain/langchain-icon.svg",
+    category: "LLM Framework",
+  },
+  {
     name: "TensorFlow",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",
     category: "Framework",
@@ -15,6 +25,16 @@ const aiTechnologies = [
     name: "PyTorch",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg",
     category: "Framework",
+  },
+  {
+    name: "Hugging Face",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/83/Hugging_Face_logo.svg",
+    category: "AI Platform",
+  },
+  {
+    name: "Claude",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg", // Using a generic AI icon since Claude doesn't have a public icon
+    category: "LLM",
   },
   {
     name: "Scikit-Learn",
@@ -66,6 +86,29 @@ const aiDomains = [
         strokeLinejoin="round"
       >
         <path d="M12 2v8m0 12V12m0 0L2 9m10 3l10-3" />
+      </svg>
+    ),
+  },
+  {
+    title: "Prompt Engineering",
+    description:
+      "Crafting and optimizing prompts for large language models to achieve specific tasks and generate high-quality outputs.",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-10 w-10"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M21 15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2" />
+        <path d="M8 11h8" />
+        <path d="M10 15h4" />
+        <path d="M8 7h8" />
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
       </svg>
     ),
   },
@@ -300,8 +343,8 @@ export default function AIExpertise() {
                       </svg>
                     </div>
                     <p className="text-sm">
-                      <span className="font-medium">Predictive Analytics:</span>{" "}
-                      Building models that can forecast trends and outcomes
+                      <span className="font-medium">Prompt Engineering:</span>{" "}
+                      Optimizing LLM interactions for enhanced results
                     </p>
                   </li>
                   <li className="flex items-start gap-2">
@@ -321,10 +364,8 @@ export default function AIExpertise() {
                       </svg>
                     </div>
                     <p className="text-sm">
-                      <span className="font-medium">
-                        Computer Vision Systems:
-                      </span>{" "}
-                      Developing applications that can interpret visual data
+                      <span className="font-medium">Predictive Analytics:</span>{" "}
+                      Building models that can forecast trends and outcomes
                     </p>
                   </li>
                   <li className="flex items-start gap-2">

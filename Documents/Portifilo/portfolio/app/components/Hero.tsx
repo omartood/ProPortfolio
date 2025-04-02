@@ -1,35 +1,68 @@
-<div className="flex flex-wrap gap-4">
-  <Link
-    href="/projects"
-    className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-300"
-  >
-    View My Work
-  </Link>
-  <Link
-    href="/ai-agent"
-    className="bg-card border border-border hover:border-primary/50 px-6 py-3 rounded-lg font-medium transition-colors duration-300 flex items-center gap-2"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
-    Try My AI Assistant
-  </Link>
-  <Link
-    href="/#contact"
-    className="bg-card border border-border hover:border-primary/50 px-6 py-3 rounded-lg font-medium transition-colors duration-300"
-  >
-    Get In Touch
-  </Link>
-</div>;
+"use client";
+
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+
+const Hero = () => {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10 dark:opacity-20">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f46e5,#7c3aed,#2563eb)]" />
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Text Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center lg:text-left"
+          >
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Hi, I'm Omar Tood
+            </h1>
+            <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8">
+              Full Stack Developer & UI/UX Designer
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link
+                href="/projects"
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center"
+              >
+                View Projects
+              </Link>
+              <Link
+                href="/contact"
+                className="px-8 py-3 border-2 border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center"
+              >
+                Contact Me
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative h-[300px] sm:h-[400px] lg:h-[500px] mx-auto"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl opacity-20 dark:opacity-30" />
+            <Image
+              src="/images/profile.jpg"
+              alt="Omar Tood"
+              fill
+              className="object-cover rounded-full border-4 border-white dark:border-gray-800 shadow-xl"
+              priority
+            />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;

@@ -2,35 +2,133 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --secondary: #10b981;
-  --accent: #8b5cf6;
-  --muted: #9ca3af;
-  --muted-foreground: #6b7280;
-  --card: #ffffff;
-  --card-foreground: #171717;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --radius: 0.5rem;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 221.2 83.2% 53.3%;
+    --primary-light: 210 100% 66%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-light: 212.7 93.7% 67.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
 }
 
-.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --secondary: #059669;
-  --accent: #7c3aed;
-  --muted: #6b7280;
-  --muted-foreground: #9ca3af;
-  --card: #171717;
-  --card-foreground: #ededed;
-  --border: #27272a;
-  --input: #27272a;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background-color: rgba(
+      59,
+      130,
+      246,
+      0.2
+    ); /* Primary color with 20% opacity */
+  }
+
+  /* Improved input handling for touch devices */
+  input,
+  textarea,
+  button,
+  select,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Remove scroll bounce/rubber-band effect on mobile */
+  html {
+    overscroll-behavior: none;
+    height: 100%;
+  }
+
+  /* Better handling of fixed position elements on mobile browsers */
+  .fixed {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Hide scrollbars but keep functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Responsive padding for safer zone on mobile devices with notches */
+  @supports (padding: env(safe-area-inset-left)) {
+    .safe-padding {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+    .safe-padding-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
 }
 
 @theme inline {
@@ -58,4 +156,64 @@ html {
 :root,
 html.dark {
   transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark mode iframe styles */
+.dark-iframe-container iframe {
+  filter: invert(0.85) hue-rotate(180deg) contrast(0.9) brightness(0.9);
+  transition: filter 0.3s ease;
+}
+
+.light-iframe-container iframe {
+  filter: none;
+  transition: filter 0.3s ease;
+}
+
+/* Fix for Jotform specific styling in dark mode */
+.dark-iframe-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: hsl(var(--background));
+  z-index: 1;
+}
+
+/* Add custom message for dark mode notice */
+.dark-iframe-container::after {
+  content: "Dark mode active";
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  z-index: 2;
+}
+
+/* Invert certain elements back in dark mode to fix colors */
+.dark-iframe-container iframe img,
+.dark-iframe-container iframe .form-logo,
+.dark-iframe-container iframe .form-header-icon {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Fix button styling in dark mode */
+.dark-iframe-container iframe .form-submit-button,
+.dark-iframe-container iframe .form-submit-button:hover {
+  filter: invert(0.6) hue-rotate(180deg) saturate(1.8) !important;
+}
+
+/* Ensure text remains readable in dark mode */
+.dark-iframe-container iframe input[type="text"],
+.dark-iframe-container iframe input[type="email"],
+.dark-iframe-container iframe textarea {
+  color: #e5e5e5 !important;
+  background-color: #333 !important;
+}
+
+/* Add a transition effect when switching modes */
+iframe {
+  transition: all 0.3s ease;
 }

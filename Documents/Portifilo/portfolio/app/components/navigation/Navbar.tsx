@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { X, Menu, ChevronDown } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -21,21 +22,74 @@ const navLinks = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [prevScrollY, setPrevScrollY] = useState(0);
+  const [navVisible, setNavVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
 
+  // Set mounted state
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Handle scroll for showing/hiding navbar and applying background
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      const currentScrollY = window.scrollY;
+
+      // Apply background when scrolled down
+      if (currentScrollY > 50) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
+
+      // Hide/show navbar based on scroll direction
+      if (currentScrollY > 100) {
+        if (currentScrollY > prevScrollY && navVisible) {
+          // Scrolling down - hide navbar
+          setNavVisible(false);
+        } else if (currentScrollY < prevScrollY && !navVisible) {
+          // Scrolling up - show navbar
+          setNavVisible(true);
+        }
+      } else {
+        setNavVisible(true);
+      }
+
+      setPrevScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [prevScrollY, navVisible]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        mobileMenuOpen
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [mobileMenuOpen]);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   // Handle navigation with scroll behavior
   const handleNavigation = (href: string) => {
@@ -44,8 +98,9 @@ export default function Navbar() {
     }
 
     // If it's an anchor link and we're on the home page
-    if (href.startsWith("#") && pathname === "/") {
-      const element = document.querySelector(href);
+    if (href.startsWith("/#") && pathname === "/") {
+      const id = href.substring(2);
+      const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
       }
@@ -53,7 +108,7 @@ export default function Navbar() {
     }
 
     // If it's an anchor link on another page
-    if (href.includes("#") && pathname !== "/") {
+    if (href.includes("#") && href.startsWith("/") && pathname !== "/") {
       router.push(href);
       return;
     }
@@ -90,32 +145,35 @@ export default function Navbar() {
   const mobileMenuVariants = {
     closed: {
       opacity: 0,
-      scale: 0.95,
+      height: 0,
       transition: {
-        duration: 0.2,
-        ease: "easeIn",
+        duration: 0.3,
+        ease: "easeInOut",
       },
     },
     open: {
       opacity: 1,
-      scale: 1,
+      height: "auto",
       transition: {
-        duration: 0.3,
+        duration: 0.4,
         ease: "easeOut",
       },
     },
   };
+
+  // Don't render anything until mounted (hydration safe)
+  if (!mounted) return null;
 
   return (
     <motion.header
       variants={navbarVariants}
       initial="hidden"
       animate="visible"
-      className={`fixed top-0 left-0 right-0 z-50 py-4 px-6 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 py-4 px-6 transition-all duration-300 safe-padding ${
         isScrolled
-          ? "bg-background/80 backdrop-blur-md shadow-sm"
+          ? "bg-background/90 backdrop-blur-lg shadow-sm border-b border-border/50"
           : "bg-transparent"
-      }`}
+      } ${navVisible ? "translate-y-0" : "-translate-y-full"}`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <motion.div
@@ -130,7 +188,7 @@ export default function Navbar() {
         </motion.div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-8">
           {navLinks.map((link, i) => (
             <motion.div
               key={link.name}
@@ -141,91 +199,66 @@ export default function Navbar() {
             >
               <button
                 onClick={() => handleNavigation(link.href)}
-                className="text-foreground/80 hover:text-primary transition-colors duration-300 text-sm font-medium"
+                className={`text-foreground/80 hover:text-primary transition-colors duration-300 text-sm font-medium ${
+                  pathname === link.href ||
+                  (link.href.includes("#") &&
+                    pathname === "/" &&
+                    typeof window !== "undefined" &&
+                    window.location.hash === link.href.substring(1))
+                    ? "text-primary"
+                    : ""
+                }`}
               >
                 {link.name}
               </button>
             </motion.div>
           ))}
-          <motion.div
-            custom={navLinks.length}
-            variants={linkVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <button
-              onClick={() =>
-                handleNavigation(pathname === "/" ? "#contact" : "/#contact")
-              }
-              className="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-primary-light transition-colors duration-300"
-            >
-              Let's Talk
-            </button>
-          </motion.div>
         </nav>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-foreground p-2"
-            aria-label="Menu"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden p-2 hover:bg-accent rounded-lg transition-colors duration-300"
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
+        </button>
       </div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            ref={mobileMenuRef}
             variants={mobileMenuVariants}
             initial="closed"
             animate="open"
             exit="closed"
-            className="absolute top-full left-0 right-0 bg-card shadow-lg rounded-b-lg py-4 px-6 md:hidden"
+            className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-lg border-b border-border/50 overflow-hidden"
           >
-            <nav className="flex flex-col gap-4">
+            <nav className="max-w-7xl mx-auto py-4 px-6 flex flex-col gap-2">
               {navLinks.map((link, i) => (
-                <button
+                <motion.div
                   key={link.name}
-                  onClick={() => handleNavigation(link.href)}
-                  className="text-foreground/80 hover:text-primary py-2 transition-colors duration-300 text-sm font-medium text-left"
+                  variants={linkVariants}
+                  custom={i}
+                  initial="hidden"
+                  animate="visible"
                 >
-                  {link.name}
-                </button>
+                  <button
+                    onClick={() => handleNavigation(link.href)}
+                    className={`w-full text-left py-2 px-4 rounded-lg hover:bg-accent transition-colors duration-300 ${
+                      pathname === link.href ? "text-primary" : ""
+                    }`}
+                  >
+                    {link.name}
+                  </button>
+                </motion.div>
               ))}
-              <button
-                onClick={() =>
-                  handleNavigation(pathname === "/" ? "#contact" : "/#contact")
-                }
-                className="bg-primary text-white px-5 py-2 rounded-full text-center text-sm font-medium hover:bg-primary-light transition-colors duration-300 mt-2"
-              >
-                Let's Talk
-              </button>
             </nav>
           </motion.div>
         )}

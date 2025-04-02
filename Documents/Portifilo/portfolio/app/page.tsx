@@ -2,6 +2,7 @@ import Navbar from "./components/navigation/Navbar";
 import Hero from "./components/hero/Hero";
 import About from "./components/about/About";
 import Skills from "./components/skills/Skills";
+import CurrentProject from "./components/projects/CurrentProject";
 import Projects from "./components/projects/Projects";
 import AIExpertise from "./components/ai/AIExpertise";
 import Testimonials from "./components/testimonials/Testimonials";
@@ -17,6 +18,7 @@ export default function Home() {
       <Hero />
       <About />
       <Skills />
+      <CurrentProject />
       <Projects />
       <AIExpertise />
       <Gallery />

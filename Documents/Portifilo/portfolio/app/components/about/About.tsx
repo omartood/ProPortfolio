@@ -44,7 +44,7 @@ export default function About() {
               {/* About image */}
               <div className="aspect-[4/5] relative">
                 <Image
-                  src="/images/image-2.png"
+                  src="/images/imag-4.jpg"
                   alt="Omar Jibril Abdulkadir"
                   fill
                   className="object-cover"
@@ -75,7 +75,7 @@ export default function About() {
               variants={itemVariants}
               className="text-3xl md:text-4xl font-bold"
             >
-              Professional <span className="text-primary">Web Developer</span>{" "}
+              Professional <span className="text-primary">Full Stack Developer</span>{" "}
               with a passion for creating meaningful experiences
             </motion.h2>
 
