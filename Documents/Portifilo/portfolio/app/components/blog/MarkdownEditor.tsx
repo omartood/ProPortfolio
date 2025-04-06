@@ -1,157 +1,250 @@
 "use client";
 
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Heading1,
+  Heading2,
+  Code,
+  Quote,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Undo,
+  Redo,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  TextQuote,
+} from "lucide-react";
 
 interface MarkdownEditorProps {
-  content: string;
-  onChange: (content: string) => void;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  height?: string;
 }
 
-export default function MarkdownEditor({
-  content,
+const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+  value,
   onChange,
-}: MarkdownEditorProps) {
-  const [activeTab, setActiveTab] = useState<string>("write");
+  placeholder = "Write your content here...",
+  height = "min-h-[400px]",
+}) => {
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedText, setSelectedText] = useState({
+    start: 0,
+    end: 0,
+    text: "",
+  });
 
-  // Simple parser for the preview
-  const renderPreview = () => {
-    if (!content) {
-      return (
-        <div className="text-muted-foreground italic p-4">
-          No content to preview
-        </div>
-      );
+  // Track selection changes
+  const handleSelect = () => {
+    if (editorRef.current) {
+      const start = editorRef.current.selectionStart;
+      const end = editorRef.current.selectionEnd;
+      setSelectedText({
+        start,
+        end,
+        text: value.substring(start, end),
+      });
     }
+  };
 
-    const paragraphs = content.split("\n\n");
+  // Auto resize the textarea based on content
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.style.height = "auto";
+      editorRef.current.style.height = `${editorRef.current.scrollHeight}px`;
+    }
+  }, [value]);
 
-    return (
-      <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
-        {paragraphs.map((paragraph, index) => {
-          // Heading parsing
-          if (paragraph.startsWith("# ")) {
-            return (
-              <h1 key={index} className="text-2xl font-bold mt-8 mb-4">
-                {paragraph.substring(2)}
-              </h1>
-            );
-          } else if (paragraph.startsWith("## ")) {
-            return (
-              <h2 key={index} className="text-xl font-bold mt-6 mb-3">
-                {paragraph.substring(3)}
-              </h2>
-            );
-          } else if (paragraph.startsWith("### ")) {
-            return (
-              <h3 key={index} className="text-lg font-bold mt-4 mb-2">
-                {paragraph.substring(4)}
-              </h3>
-            );
-          }
+  // Insert formatting at cursor position or around selected text
+  const formatText = (prefix: string, suffix: string = "") => {
+    if (!editorRef.current) return;
 
-          // Code block parsing
-          if (paragraph.startsWith("```") && paragraph.endsWith("```")) {
-            const code = paragraph.slice(3, -3).trim();
-            return (
-              <div key={index} className="my-4">
-                <SyntaxHighlighter
-                  language="javascript"
-                  style={vscDarkPlus}
-                  customStyle={{
-                    borderRadius: "0.375rem",
-                    padding: "1rem",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  {code}
-                </SyntaxHighlighter>
-              </div>
-            );
-          }
+    const { selectionStart, selectionEnd } = editorRef.current;
+    const selectedText = value.substring(selectionStart, selectionEnd);
 
-          // List parsing
-          if (paragraph.match(/^(\d+\.\s|[-*]\s)/m)) {
-            const items = paragraph.split("\n");
-            const isOrdered = items[0].match(/^\d+\.\s/);
+    // If text is selected, wrap it with formatting
+    if (selectedText) {
+      const beforeText = value.substring(0, selectionStart);
+      const afterText = value.substring(selectionEnd);
+      const newText = `${beforeText}${prefix}${selectedText}${suffix}${afterText}`;
 
-            if (isOrdered) {
-              return (
-                <ol key={index} className="list-decimal pl-6 my-4 space-y-2">
-                  {items.map((item, i) => (
-                    <li key={i} className="pl-2">
-                      {item.replace(/^\d+\.\s/, "")}
-                    </li>
-                  ))}
-                </ol>
-              );
-            } else {
-              return (
-                <ul key={index} className="list-disc pl-6 my-4 space-y-2">
-                  {items.map((item, i) => (
-                    <li key={i} className="pl-2">
-                      {item.replace(/^[-*]\s/, "")}
-                    </li>
-                  ))}
-                </ul>
-              );
-            }
-          }
+      onChange(newText);
 
-          // Regular paragraph or anything else
-          return (
-            <p key={index} className="my-3">
-              {paragraph}
-            </p>
+      // Set the cursor position after the operation
+      setTimeout(() => {
+        if (editorRef.current) {
+          editorRef.current.focus();
+          editorRef.current.setSelectionRange(
+            selectionStart + prefix.length,
+            selectionEnd + prefix.length
           );
-        })}
-      </div>
-    );
+        }
+      }, 0);
+    } else {
+      // If no text is selected, just insert the formatting characters
+      const cursorPos = selectionStart;
+      const beforeText = value.substring(0, cursorPos);
+      const afterText = value.substring(cursorPos);
+      const newText = `${beforeText}${prefix}${suffix}${afterText}`;
+
+      onChange(newText);
+
+      // Set cursor between prefix and suffix
+      setTimeout(() => {
+        if (editorRef.current) {
+          editorRef.current.focus();
+          editorRef.current.setSelectionRange(
+            cursorPos + prefix.length,
+            cursorPos + prefix.length
+          );
+        }
+      }, 0);
+    }
+  };
+
+  // Toolbar action handlers
+  const actions = {
+    bold: () => formatText("**", "**"),
+    italic: () => formatText("*", "*"),
+    h1: () => formatText("# "),
+    h2: () => formatText("## "),
+    list: () => formatText("- "),
+    orderedList: () => formatText("1. "),
+    code: () => formatText("```\n", "\n```"),
+    inlineCode: () => formatText("`", "`"),
+    quote: () => formatText("> "),
+    link: () => {
+      const url = prompt("Enter link URL:");
+      if (url) {
+        formatText("[", `](${url})`);
+      }
+    },
+    image: () => {
+      const url = prompt("Enter image URL:");
+      const alt = prompt("Enter image description:");
+      if (url) {
+        formatText(`![${alt || "Image"}](${url})`);
+      }
+    },
+    undo: () => document.execCommand("undo"),
+    redo: () => document.execCommand("redo"),
   };
 
   return (
-    <div className="border border-border rounded-md">
-      <Tabs defaultValue="write" onValueChange={setActiveTab}>
-        <div className="border-b border-border px-3 py-2">
-          <TabsList className="grid w-[200px] grid-cols-2">
-            <TabsTrigger value="write">Write</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-          </TabsList>
+    <div className="w-full border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <button
+          onClick={actions.bold}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Bold"
+        >
+          <Bold size={18} />
+        </button>
+        <button
+          onClick={actions.italic}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Italic"
+        >
+          <Italic size={18} />
+        </button>
+        <div className="h-6 w-px bg-gray-300 dark:bg-gray-700 mx-1" />
+        <button
+          onClick={actions.h1}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Heading 1"
+        >
+          <Heading1 size={18} />
+        </button>
+        <button
+          onClick={actions.h2}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Heading 2"
+        >
+          <Heading2 size={18} />
+        </button>
+        <div className="h-6 w-px bg-gray-300 dark:bg-gray-700 mx-1" />
+        <button
+          onClick={actions.list}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Bullet List"
+        >
+          <List size={18} />
+        </button>
+        <button
+          onClick={actions.orderedList}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Numbered List"
+        >
+          <ListOrdered size={18} />
+        </button>
+        <div className="h-6 w-px bg-gray-300 dark:bg-gray-700 mx-1" />
+        <button
+          onClick={actions.quote}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Quote"
+        >
+          <TextQuote size={18} />
+        </button>
+        <button
+          onClick={actions.code}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Code Block"
+        >
+          <Code size={18} />
+        </button>
+        <div className="h-6 w-px bg-gray-300 dark:bg-gray-700 mx-1" />
+        <button
+          onClick={actions.link}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Insert Link"
+        >
+          <LinkIcon size={18} />
+        </button>
+        <button
+          onClick={actions.image}
+          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+          title="Insert Image"
+        >
+          <ImageIcon size={18} />
+        </button>
+      </div>
+
+      {/* Editor */}
+      <textarea
+        ref={editorRef}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onSelect={handleSelect}
+        placeholder={placeholder}
+        className={`w-full p-4 focus:outline-none focus:ring-0 resize-none ${height} text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-800`}
+      />
+
+      {/* Preview - can be toggled but we'll leave it always visible */}
+      <div className="p-4 border-t border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Preview
+          </span>
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {value.length} characters
+          </div>
         </div>
-
-        <TabsContent value="write" className="p-0">
-          <Textarea
-            value={content}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Write your blog post content in Markdown..."
-            className="min-h-[400px] p-4 border-0 rounded-none font-mono text-sm resize-y focus-visible:ring-0 focus-visible:ring-offset-0"
-          />
-        </TabsContent>
-
-        <TabsContent value="preview" className="p-4">
-          <div className="min-h-[400px] overflow-auto">{renderPreview()}</div>
-        </TabsContent>
-      </Tabs>
-
-      <div className="border-t border-border p-3 bg-muted/40">
-        <div className="text-xs text-muted-foreground">
-          <p className="font-semibold mb-1">Markdown Tips:</p>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
-            <li># Heading 1</li>
-            <li>## Heading 2</li>
-            <li>### Heading 3</li>
-            <li>**Bold Text**</li>
-            <li>*Italic Text*</li>
-            <li>- List Item</li>
-            <li>1. Numbered Item</li>
-            <li>[Link Text](URL)</li>
-            <li>```code block```</li>
-          </ul>
+        <div className="prose prose-sm max-w-none dark:prose-invert">
+          {/* We're not adding an actual preview renderer here as ReactMarkdown is used in MDXRenderer */}
+          <div className="text-sm text-gray-500 dark:text-gray-400 italic">
+            Preview will be rendered when you save.
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default MarkdownEditor;

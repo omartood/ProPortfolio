@@ -1,154 +1,154 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
 
-interface Post {
+interface BlogPostData {
   id: string;
   title: string;
   slug: string;
-  content: string;
   excerpt: string;
+  content: string;
+  coverImage: string;
   publishedAt: string;
-  imageUrl?: string;
+  tags: string[];
+  author?: {
+    name: string;
+    avatar?: string;
+  };
 }
 
-// Get the path to the JSON file
-const dataFilePath = path.join(process.cwd(), "data", "posts.json");
+// Path to blog posts data file
+const dataFilePath = path.join(process.cwd(), "data", "blog-posts.json");
 
-// Helper function to read posts
-const readPosts = (): Post[] => {
-  try {
-    const fileData = fs.readFileSync(dataFilePath, "utf8");
-    return JSON.parse(fileData);
-  } catch (error) {
+// Get all blog posts
+const getBlogPosts = (): BlogPostData[] => {
+  if (!fs.existsSync(dataFilePath)) {
     return [];
   }
+
+  const fileContent = fs.readFileSync(dataFilePath, "utf-8");
+  return JSON.parse(fileContent);
 };
 
-// Helper function to write posts
-const writePosts = (posts: Post[]) => {
-  try {
-    const fileDirectory = path.dirname(dataFilePath);
-
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(fileDirectory)) {
-      fs.mkdirSync(fileDirectory, { recursive: true });
-    }
-
-    fs.writeFileSync(dataFilePath, JSON.stringify(posts, null, 2), "utf8");
-    return true;
-  } catch (error) {
-    console.error("Error writing posts:", error);
-    return false;
+// Save blog posts to file
+const saveBlogPosts = (posts: BlogPostData[]) => {
+  const dataDir = path.join(process.cwd(), "data");
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
   }
+  fs.writeFileSync(dataFilePath, JSON.stringify(posts, null, 2));
 };
 
-// Generate a slug from a title
-const generateSlug = (title: string) => {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s]/gi, "")
-    .replace(/\s+/g, "-");
-};
-
-// GET handler - retrieve a single post
+// GET: Get a specific blog post by ID or slug
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { id: string } }
 ) {
-  const posts = readPosts();
+  try {
+    const posts = getBlogPosts();
 
-  // First, try to find by id
-  let post = posts.find((post) => post.id === params.slug);
+    // First try to find by ID
+    let post = posts.find((p) => p.id === params.id);
 
-  // If not found by id, try to find by slug
-  if (!post) {
-    post = posts.find((post) => post.slug === params.slug);
+    // If not found by ID, try by slug
+    if (!post) {
+      post = posts.find((p) => p.slug === params.id);
+    }
+
+    if (!post) {
+      return NextResponse.json(
+        { error: "Blog post not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(post);
+  } catch (error) {
+    console.error("Error fetching blog post:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch blog post" },
+      { status: 500 }
+    );
   }
-
-  if (!post) {
-    return NextResponse.json({ error: "Post not found" }, { status: 404 });
-  }
-
-  return NextResponse.json(post);
 }
 
-// PUT handler - update a post
+// PUT: Update a blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { id: string } }
 ) {
-  const posts = readPosts();
+  try {
+    const posts = getBlogPosts();
+    const postIndex = posts.findIndex((p) => p.id === params.id);
 
-  // Try to find the post by id
-  let postIndex = posts.findIndex((post) => post.id === params.slug);
+    if (postIndex === -1) {
+      return NextResponse.json(
+        { error: "Blog post not found" },
+        { status: 404 }
+      );
+    }
 
-  // If not found by id, try to find by slug
-  if (postIndex === -1) {
-    postIndex = posts.findIndex((post) => post.slug === params.slug);
-  }
+    const updatedData = await request.json();
 
-  if (postIndex === -1) {
-    return NextResponse.json({ error: "Post not found" }, { status: 404 });
-  }
+    // Check for duplicate slug with other posts
+    const slugExists = posts.some(
+      (p, i) => p.slug === updatedData.slug && i !== postIndex
+    );
 
-  // Get the request body
-  const { title, content, imageUrl } = await request.json();
+    if (slugExists) {
+      return NextResponse.json(
+        { error: "A post with this slug already exists" },
+        { status: 400 }
+      );
+    }
 
-  // Update the post
-  posts[postIndex] = {
-    ...posts[postIndex],
-    title,
-    content,
-    slug: generateSlug(title),
-    imageUrl,
-  };
+    // Update the post
+    const updatedPost = {
+      ...posts[postIndex],
+      ...updatedData,
+      // Don't allow overriding the ID
+      id: params.id,
+    };
 
-  // Write the updated posts
-  const success = writePosts(posts);
+    posts[postIndex] = updatedPost;
+    saveBlogPosts(posts);
 
-  if (!success) {
+    return NextResponse.json(updatedPost);
+  } catch (error) {
+    console.error("Error updating blog post:", error);
     return NextResponse.json(
-      { error: "Failed to update post" },
+      { error: "Failed to update blog post" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(posts[postIndex]);
 }
 
-// DELETE handler - delete a post
+// DELETE: Delete a blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { id: string } }
 ) {
-  const posts = readPosts();
+  try {
+    const posts = getBlogPosts();
+    const postIndex = posts.findIndex((p) => p.id === params.id);
 
-  // Try to find the post by id
-  let postIndex = posts.findIndex((post) => post.id === params.slug);
+    if (postIndex === -1) {
+      return NextResponse.json(
+        { error: "Blog post not found" },
+        { status: 404 }
+      );
+    }
 
-  // If not found by id, try to find by slug
-  if (postIndex === -1) {
-    postIndex = posts.findIndex((post) => post.slug === params.slug);
-  }
+    // Remove the post
+    const removedPost = posts.splice(postIndex, 1)[0];
+    saveBlogPosts(posts);
 
-  if (postIndex === -1) {
-    return NextResponse.json({ error: "Post not found" }, { status: 404 });
-  }
-
-  // Remove the post
-  posts.splice(postIndex, 1);
-
-  // Write the updated posts
-  const success = writePosts(posts);
-
-  if (!success) {
+    return NextResponse.json({ success: true, post: removedPost });
+  } catch (error) {
+    console.error("Error deleting blog post:", error);
     return NextResponse.json(
-      { error: "Failed to delete post" },
+      { error: "Failed to delete blog post" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ success: true });
 }
